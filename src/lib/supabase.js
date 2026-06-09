@@ -4,7 +4,13 @@ import { createClient } from '@supabase/supabase-js'
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co'
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-anon-key'
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const isConfigured = SUPABASE_URL !== 'https://placeholder.supabase.co' &&
+  SUPABASE_ANON_KEY !== 'placeholder-anon-key' &&
+  SUPABASE_URL.startsWith('https://') &&
+  SUPABASE_ANON_KEY.length > 20
+
+export const supabase = isConfigured ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null
+export const isSupabaseConfigured = isConfigured
 
 /*
   ══════════════════════════════════════════════════════════════════

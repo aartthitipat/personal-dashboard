@@ -29,6 +29,13 @@ export default function App() {
   const fetchTransactions = useCallback(async () => {
     setLoading(true)
 
+    if (!supabase) {
+      setTransactions([])
+      setLoading(false)
+      notify('error', 'Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Vercel.')
+      return
+    }
+
     let q = supabase
       .from('transactions')
       .select('*')
@@ -53,6 +60,11 @@ export default function App() {
 
   /* ── Save transaction + upload slip ────────────────────────── */
   const handleSave = async (formData, file) => {
+    if (!supabase) {
+      notify('error', 'Supabase is not configured. Add the env vars in Vercel first.')
+      return false
+    }
+
     let slip_url = null
 
     if (file) {
@@ -90,6 +102,11 @@ export default function App() {
 
   /* ── Delete transaction + storage file ────────────────────── */
   const handleDelete = async (id, slipUrl) => {
+    if (!supabase) {
+      notify('error', 'Supabase is not configured. Add the env vars in Vercel first.')
+      return
+    }
+
     if (!window.confirm('Delete this transaction? This cannot be undone.')) return
 
     if (slipUrl) {
